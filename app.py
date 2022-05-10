@@ -15,8 +15,8 @@ import pandas as pd
 import base64
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 
 from app_functions import phase_map, generate_phase_trajectory, make_phase_map
@@ -86,9 +86,9 @@ nmax_max = 1000
 nmax_marks = {float(x):str(round(x,2)) for x in np.arange(0,nmax_max,100)}
 
 
-# PDF image of text
-image_filename = 'diff_eqn.png' # replace with your own image
-encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+# # PDF image of text
+# image_filename = 'diff_eqn.png' # replace with your own image
+# encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 
 
