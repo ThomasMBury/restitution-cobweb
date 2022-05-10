@@ -95,8 +95,8 @@ a_max = 200
 a_marks = {float(x):str(round(x,2)) for x in np.arange(a_min,a_max,10)}
 
 b_min = 0.005
-b_max = 0.015
-b_marks = {float(x):str(round(x,4)) for x in np.arange(b_min,b_max,0.002)}
+b_max = 0.05
+b_marks = {float(x):str(round(x,4)) for x in np.arange(b_min,b_max,0.01)}
 
 theta_min = 0
 theta_max = 50
