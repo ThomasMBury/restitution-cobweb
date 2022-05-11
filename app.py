@@ -19,8 +19,8 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 
-
-from app_functions import generate_cobweb_trajectory, make_cobweb_fig, make_restitution_fig
+from app_functions import generate_cobweb_trajectory, make_cobweb_fig,\
+    make_restitution_fig, make_apd_sequence
 
 
 
@@ -48,9 +48,6 @@ server = app.server
 #-------------------
 
 # Default model parameter values
-
-
-
 apdmax = 207
 alpha = 136
 tau = 78
@@ -67,6 +64,8 @@ apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
 # Make figures
 fig_cobweb = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
 fig_restitution = make_restitution_fig(apdmax, alpha, tau)
+fig_apd_sequence = make_apd_sequence(apd_traj)
+
 
 #--------------------
 # App layout
@@ -87,8 +86,8 @@ nmax_max = 100
 # nmax_step = 20
 # nmax_marks = {float(x):str(round(x,2)) for x in np.arange(nmax_min,nmax_max,20)}
 
-apdmax_min = 0
-apdmax_max = 200
+apdmax_min = 100
+apdmax_max = 300
 
 alpha_min = 0
 alpha_max = 200
@@ -124,22 +123,40 @@ x_{t+1} = (3/2)x_t - 1 for 2/3 <= x_t < 1
 
 app.layout = html.Div([
       
-    # html.Div(
-    #     html.H1('Cobweb plot',
-    #              	style={'textAlign':'center',
-    #                     'fontSize':size_title,
-    #                     'color':'black'}
-    #             )
-    #     ),
+    # Title section
+    html.Div(
+        html.H1('Restitution analysis',
+                style={'textAlign':'center',
+                       'fontSize':size_title,
+                       'color':'black',
+                       'padding-top':'10px',
+                       'padding-left':'30px',
+                       }
+        )
+    ),
+                                    
+    
+# 		style={'width':'25%',
+# 			   'height':'800px',
+# 			   'fontSize':'10px',
+# 			   'padding-left':'3%',
+# 			   'padding-right':'2%',
+# 			   'padding-bottom':'0px',
+#                 'padding-top':'40px',
+# 			   'vertical-align': 'middle',
+# 			   'display':'inline-block'
+#                 }    
+    
+    
     
     # Left half of app
  	html.Div([
         
-        html.H1('Restitution analysis',
-                  style={'textAlign':'left',
-                        'fontSize':size_title,
-                        'color':'black'}
-        ),
+        # html.H1('Restitution analysis',
+        #           style={'textAlign':'left',
+        #                 'fontSize':size_title,
+        #                 'color':'black'}
+        # ),
 
         # Slider for apd0
 		html.Label('APD_0 = {} ms'.format(apd0),
@@ -227,7 +244,7 @@ app.layout = html.Div([
  				   style={'fontSize':size_slider_text},
                     ),  
         
-        dcc.Markdown(r'$ E=mc^2 $', mathjax=True),
+        # dcc.Markdown(r'$ E=mc^2 $', mathjax=True),
  				   
         
 		dcc.Slider(id='ts_slider',
@@ -239,7 +256,7 @@ app.layout = html.Div([
 		),],                  
          
 		style={'width':'25%',
-			   'height':'800px',
+			   'height':'470px',
 			   'fontSize':'10px',
 			   'padding-left':'3%',
 			   'padding-right':'2%',
@@ -260,7 +277,7 @@ app.layout = html.Div([
    				   ),
    		 ],
   		style={'width':'30%',
-  			   'height':'800px',
+  			   'height':'470px',
   			   'fontSize':'15px',
   			   'padding-left':'0%',
   			   'padding-right':'0%',
@@ -277,7 +294,7 @@ app.layout = html.Div([
    				   ),
    		 ],
   		style={'width':'30%',
-  			   'height':'800px',
+  			   'height':'470px',
   			   'fontSize':'15px',
   			   'padding-left':'0%',
   			   'padding-right':'0%',
@@ -285,17 +302,47 @@ app.layout = html.Div([
   			   'display':'inline-block'},
    	),     
 
+   	# APD sequence
+   	html.Div(
+  		[dcc.Graph(id='fig_apd_sequence',
+                   mathjax=True,
+   				   figure = fig_apd_sequence,
+   				   # config={'displayModeBar': False},
+   				   ),
+   		 ],
+  		style={'width':'90%',
+  			   'height':'320px',
+  			   'fontSize':'15px',
+  			   'padding-left':'5%',
+  			   'padding-right':'5%',
+  			   'vertical-align': 'middle',
+  			   'display':'inline-block'},
+   	),     
+
+
+    # Footer
+    html.Footer(
+        [
+            'Source code ',
+        html.A('here',
+               href='https://github.com/ThomasMBury/restitution-cobweb/', 
+               target="_blank",
+               ),
+        ],
+        style={'fontSize':'15px',
+                          'width':'100%',
+                           # 'horizontal-align':'middle',
+                          'textAlign':'center',
+               },
+                
+        ),
 
 ])
         
-        
-    
-
 
 # #–-------------------
 # # Callback functions
 # #–--------------------
-
   
 # Update text for sliders             
 @app.callback(
@@ -338,6 +385,7 @@ def update_slider_text(apd0,nmax,apdmax,alpha,tau,theta,ts):
 @app.callback(
             Output('fig_restitution','figure'),
             Output('fig_cobweb','figure'),
+            Output('fig_apd_sequence','figure'),
             [
           Input('apd0_slider','value'),
           Input('nmax_slider','value'),
@@ -358,8 +406,10 @@ def update_figs(apd0, nmax, apdmax, alpha, tau, theta, ts):
     # Make figures
     fig_cobweb = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
     fig_restitution = make_restitution_fig(apdmax, alpha, tau)
+    fig_apd_sequence = make_apd_sequence(apd_traj)
 
-    return fig_restitution, fig_cobweb
+    return fig_restitution, fig_cobweb, fig_apd_sequence
+
 
 #-----------------
 # Add the server clause

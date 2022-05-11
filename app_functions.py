@@ -53,8 +53,6 @@ def generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts):
     return list_apd
 
 
-# # Test
-# out = generate_cobweb_trajectory(cobweb_map, nmax, apd0, apdmax, alpha, tau, theta, ts)
 
 
 def make_cobweb_fig(apdmax, alpha, tau, theta, ts,
@@ -132,8 +130,8 @@ def make_cobweb_fig(apdmax, alpha, tau, theta, ts,
     
     fig.update_layout(
         # width=500, height=500,
-        margin=dict(l=50,r=10,t=70,b=10),
-        title=r'$\text{Cobweb plot}$',
+        margin=dict(l=50,r=10,t=100,b=10),
+        title=r'$\text{Cobweb plot}\\ \text{APD}_{i+1} = g(Nt_s-\text{APD}_i)$',
         )
        
     return fig
@@ -160,8 +158,33 @@ def make_restitution_fig(apdmax, alpha, tau):
     
     fig.update_layout(
         # width=500, height=500,
-        margin=dict(l=50,r=10,t=70,b=10),
-        title=r'$\text{Restitution curve}$',
+        margin=dict(l=50,r=10,t=100,b=10),
+        title=r'$\text{Restitution curve}\\ g(\text{DI})=\text{APD}_{\text{max}} - \alpha \exp^{-\frac{\text{DI}}{\tau}}$',
+        )
+    
+    return fig    
+
+
+
+def make_apd_sequence(apd_traj):
+    
+    x = np.arange(len(apd_traj))
+    y = apd_traj
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(x=x, y=y,
+                   showlegend=False,
+                   mode='markers+lines',
+                   )
+    )
+    fig.update_xaxes(title = r'$\text{Iteration}$',)
+    fig.update_yaxes(title = r'$\text{APD (ms)}$',range=[0,500])
+    
+    fig.update_layout(
+        height=300,
+        margin=dict(l=50,r=10,t=30,b=10),
+        title=r'$\text{APD sequence}$',
         )
     
     return fig    
@@ -169,33 +192,29 @@ def make_restitution_fig(apdmax, alpha, tau):
 
 
 
-
-
-# #----------------
-# # Test functions
-# #------------------- 
-
-
-
-# # Test function to generate a trajectory
-# y0=120
-# a=96.9
-# b=0.0104
-# theta = 20
-# ts = 400
-
-# apd0 = 300
-# nmax = 100
+#----------------
+# Test functions
+#------------------- 
 
 
 
-# apd_traj = generate_cobweb_trajectory(nmax, apd0, y0, a, b, theta, ts)
+# Test function to generate a trajectory
+apdmax = 300
+alpha = 100
+tau = 100
+theta = 0
+ts = 300
 
+apd0 = 300
+nmax = 10
 
-# # Test function to make figure of phase map
-# fig_cobweb_map = make_cobweb_fig(y0, a, b, theta, ts, apd_traj)
+apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
+
+# fig_cobweb_map = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
 # fig_cobweb_map.write_html('temp.html')
 
+fig_apd_sequence = make_apd_sequence(apd_traj)
+fig_apd_sequence.write_html('temp.html')
 
 
 
