@@ -19,6 +19,7 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 
+
 from app_functions import generate_cobweb_trajectory, make_cobweb_fig, make_restitution_fig
 
 
@@ -31,6 +32,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # Get mathjax for latex
 external_scripts = ['https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML']
+
 
 app = dash.Dash(__name__, 
 				external_stylesheets=external_stylesheets,
@@ -46,22 +48,25 @@ server = app.server
 #-------------------
 
 # Default model parameter values
-y0 = 120
-a = 96.9
-b = 0.0104
-theta = 20
-ts = 400
+
+
+
+apdmax = 207
+alpha = 136
+tau = 78
+theta = 0
+ts = 300
 
 # Defualt simulation parameters
 apd0 = 150 
 nmax = 40
 
 # Generate cobweb trajectory
-apd_traj = generate_cobweb_trajectory(nmax, apd0, y0, a, b, theta, ts)
+apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
 
 # Make figures
-fig_cobweb = make_cobweb_fig(y0, a, b, theta, ts, apd_traj)
-fig_restitution = make_restitution_fig(y0, a, b)
+fig_cobweb = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
+fig_restitution = make_restitution_fig(apdmax, alpha, tau)
 
 #--------------------
 # App layout
@@ -77,31 +82,22 @@ apd0_max = 250
 # apd0_step = 1
 # apd0_marks = {x:str(x) for x in np.arange(apd0_min,apd0_max,100)}
 
-
 nmax_min = 0
 nmax_max = 100
 # nmax_step = 20
 # nmax_marks = {float(x):str(round(x,2)) for x in np.arange(nmax_min,nmax_max,20)}
 
+apdmax_min = 0
+apdmax_max = 200
 
-y0_min = 0
-y0_max = 200
-# y0_step = 10
-# y0_marks = {float(x):str(round(x,2)) for x in np.arange(y0_min,y0_max,10)}
+alpha_min = 0
+alpha_max = 200
 
+tau_min = 10
+tau_max = 100
 
-a_min = 0
-a_max = 200
-a_marks = {float(x):str(round(x,2)) for x in np.arange(a_min,a_max,10)}
-
-b_min = 0.005
-b_max = 0.05
-b_marks = {float(x):str(round(x,4)) for x in np.arange(b_min,b_max,0.01)}
-
-theta_min = 0
-theta_max = 50
-# theta_step = 20
-theta_marks = {float(x):str(round(x,2)) for x in np.arange(theta_min,theta_max,10)}
+theta_min = -20
+theta_max = 20
 
 ts_min = 100
 ts_max = 500
@@ -146,7 +142,7 @@ app.layout = html.Div([
         ),
 
         # Slider for apd0
-		html.Label('APD_0 = {}'.format(apd0),
+		html.Label('APD_0 = {} ms'.format(apd0),
  				   id='apd0_slider_text',
  				   style={'fontSize':size_slider_text}),  
 		dcc.Slider(id='apd0_slider',
@@ -172,51 +168,47 @@ app.layout = html.Div([
 		),
 
         
-        # Slider for y0
-		html.Label('Initial condition = {}'.format(y0),
- 				   id='y0_slider_text',
+        # Slider for apdmax
+		html.Label('APD_max = {} ms'.format(apdmax),
+ 				   id='apdmax_slider_text',
  				   style={'fontSize':size_slider_text}),  
  				   
-		dcc.Slider(id='y0_slider',
- 				   min=y0_min, 
- 				   max=y0_max, 
+		dcc.Slider(id='apdmax_slider',
+ 				   min=apdmax_min, 
+ 				   max=apdmax_max, 
  				   # step=y0_step,
  				   # marks=y0_marks,
- 				   value=y0
+ 				   value=apdmax
 		),   
 
         
-        # Slider for a
-		html.Label('Initial condition = {}'.format(a),
- 				   id='a_slider_text',
+        # Slider for alpha
+		html.Label('alpha = {} ms'.format(alpha),
+ 				   id='alpha_slider_text',
  				   style={'fontSize':size_slider_text}),  
  				   
-		dcc.Slider(id='a_slider',
- 				   min=a_min, 
- 				   max=a_max, 
- 				   # step=a_step,
- 				   # marks=a_marks,
- 				   value=a
+		dcc.Slider(id='alpha_slider',
+ 				   min=alpha_min, 
+ 				   max=alpha_max, 
+ 				   value=alpha
 		),           
         
         
-        # Slider for b
-		html.Label('Initial condition = {}'.format(b),
- 				   id='b_slider_text',
+        # Slider for tau
+		html.Label('tau = {} ms'.format(tau),
+ 				   id='tau_slider_text',
  				   style={'fontSize':size_slider_text}),  
  				   
-		dcc.Slider(id='b_slider',
- 				   min=b_min, 
- 				   max=b_max, 
- 				   # step=b_step,
- 				   marks=b_marks,
- 				   value=b
+		dcc.Slider(id='tau_slider',
+ 				   min=tau_min, 
+ 				   max=tau_max, 
+ 				   value=tau,
 		),           
         
         
         
         # Slider for theta
-		html.Label('Initial condition = {}'.format(theta),
+		html.Label('theta = {} ms'.format(theta),
  				   id='theta_slider_text',
  				   style={'fontSize':size_slider_text}),  
  				   
@@ -230,10 +222,14 @@ app.layout = html.Div([
         
         
         # Slider for ts
-		html.Label('Initial condition = {}'.format(ts),
+		html.Label(r'$t_s = {} ms$'.format(ts),
  				   id='ts_slider_text',
- 				   style={'fontSize':size_slider_text}),  
+ 				   style={'fontSize':size_slider_text},
+                    ),  
+        
+        dcc.Markdown(r'$ E=mc^2 $', mathjax=True),
  				   
+        
 		dcc.Slider(id='ts_slider',
  				   min=ts_min, 
  				   max=ts_max, 
@@ -248,23 +244,24 @@ app.layout = html.Div([
 			   'padding-left':'3%',
 			   'padding-right':'2%',
 			   'padding-bottom':'0px',
-               'padding-top':'40px',
+                'padding-top':'40px',
 			   'vertical-align': 'middle',
 			   'display':'inline-block'
-               }
+                }
         ),
         
      
     # Restitution plot
    	html.Div(
   		[dcc.Graph(id='fig_restitution',
+                   mathjax=True,
    				   figure = fig_restitution,
    				   # config={'displayModeBar': False},
    				   ),
    		 ],
   		style={'width':'30%',
   			   'height':'800px',
-  			   'fontSize':'10px',
+  			   'fontSize':'15px',
   			   'padding-left':'0%',
   			   'padding-right':'0%',
   			   'vertical-align': 'middle',
@@ -274,13 +271,14 @@ app.layout = html.Div([
    	# Cobweb plot
    	html.Div(
   		[dcc.Graph(id='fig_cobweb',
+                   mathjax=True,
    				   figure = fig_cobweb,
    				   # config={'displayModeBar': False},
    				   ),
    		 ],
   		style={'width':'30%',
   			   'height':'800px',
-  			   'fontSize':'10px',
+  			   'fontSize':'15px',
   			   'padding-left':'0%',
   			   'padding-right':'0%',
   			   'vertical-align': 'middle',
@@ -291,43 +289,7 @@ app.layout = html.Div([
 ])
         
         
-     
-     
-
-        
-        # # Model description
-        # html.P(model_text_2_line1,
-        #         style={'fontSize':15,
-        #               'color':'black',
-        #               # 'textAlign':'left',
-        #               }),
-        # html.Br(),
-        # html.P(model_text_2_line2,
-        #         style={'fontSize':15,
-        #               'color':'black',
-        #               # 'textAlign':'left',
-        #               }),        
-         
-        # html.Br(),
-        
-
-   
-        
-        
-        
-#         ],       
-# 		style={'width':'25%',
-# 			   'height':'800px',
-# 			   'fontSize':'10px',
-# 			   'padding-left':'0%',
-# 			   'padding-right':'0%',
-# 			   'padding-bottom':'0px',
-#                'padding-top':'40px',
-# 			   'vertical-align': 'middle',
-# 			   'display':'inline-block'},
-#         ),
-
-
+    
 
 
 # #–-------------------
@@ -340,35 +302,35 @@ app.layout = html.Div([
         [
          Output('apd0_slider_text','children'),
          Output('nmax_slider_text','children'),
-         Output('y0_slider_text','children'),
-         Output('a_slider_text','children'),
-         Output('b_slider_text','children'),
+         Output('apdmax_slider_text','children'),
+         Output('alpha_slider_text','children'),
+         Output('tau_slider_text','children'),
          Output('theta_slider_text','children'),
          Output('ts_slider_text','children'),
           ],
         [
           Input('apd0_slider','value'),
           Input('nmax_slider','value'),
-          Input('y0_slider','value'),
-          Input('a_slider','value'),
-          Input('b_slider','value'),
+          Input('apdmax_slider','value'),
+          Input('alpha_slider','value'),
+          Input('tau_slider','value'),
           Input('theta_slider','value'),
           Input('ts_slider','value'),
           ]
 )
 
-def update_slider_text(apd0,nmax,y0,a,b,theta,ts):
+def update_slider_text(apd0,nmax,apdmax,alpha,tau,theta,ts):
     
     # Slider text update
-    text_apd0 = 'APD_0 = {}'.format(apd0)
+    text_apd0 = 'APD_0 = {} ms'.format(apd0)
     text_nmax = '# iterations = {}'.format(nmax)
-    text_y0 = 'y0 = {}'.format(y0)
-    text_a = 'a = {}'.format(a)
-    text_b = 'b = {}'.format(b)
-    text_theta = 'theta = {}'.format(theta)
-    text_ts = 'ts = {}'.format(ts)
+    text_apdmax = 'APD_max = {} ms'.format(apdmax)
+    text_alpha = 'alpha = {} ms'.format(alpha)
+    text_tau = 'tau = {} ms'.format(tau)
+    text_theta = 'theta = {} ms'.format(theta)
+    text_ts = 'ts = {} ms'.format(ts)
 
-    return text_apd0, text_nmax, text_y0, text_a, text_b, text_theta, text_ts
+    return text_apd0,text_nmax,text_apdmax,text_alpha,text_tau,text_theta,text_ts
             
 
 
@@ -377,25 +339,25 @@ def update_slider_text(apd0,nmax,y0,a,b,theta,ts):
             Output('fig_restitution','figure'),
             Output('fig_cobweb','figure'),
             [
-              Input('apd0_slider','value'),
-              Input('nmax_slider','value'),
-              Input('y0_slider','value'),
-              Input('a_slider','value'),
-              Input('b_slider','value'),
-              Input('theta_slider','value'),
-              Input('ts_slider','value'),        
+          Input('apd0_slider','value'),
+          Input('nmax_slider','value'),
+          Input('apdmax_slider','value'),
+          Input('alpha_slider','value'),
+          Input('tau_slider','value'),
+          Input('theta_slider','value'),
+          Input('ts_slider','value'),      
             ],
             )
 
-def update_figs(apd0, nmax, y0, a, b, theta, ts):
+def update_figs(apd0, nmax, apdmax, alpha, tau, theta, ts):
     
 
     # Generate cobweb trajectory
-    apd_traj = generate_cobweb_trajectory(nmax, apd0, y0, a, b, theta, ts)
+    apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
     
     # Make figures
-    fig_cobweb = make_cobweb_fig(y0, a, b, theta, ts, apd_traj)
-    fig_restitution = make_restitution_fig(y0, a, b)
+    fig_cobweb = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
+    fig_restitution = make_restitution_fig(apdmax, alpha, tau)
 
     return fig_restitution, fig_cobweb
 
