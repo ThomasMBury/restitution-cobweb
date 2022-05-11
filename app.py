@@ -47,10 +47,18 @@ server = app.server
 # Generate figures
 #-------------------
 
-# Default model parameter values
-apdmax = 207
-alpha = 136
-tau = 78
+# Default model parameter values from Ravi
+# y0=120, a=96.9, b=0.0104
+# apdmax=216.9 (y0+a), alpha=96.9, tau=96 (1/b)
+
+# Default model parameter values from Guevara et al. (1984)
+# apdmax=207, alpha=136, tau=78
+
+
+# Default model parameters
+apdmax = 216.9 # y0+a
+alpha = 96.9 # a
+tau = 96 # 1/b
 theta = 0
 ts = 300
 
@@ -93,7 +101,7 @@ alpha_min = 0
 alpha_max = 200
 
 tau_min = 10
-tau_max = 100
+tau_max = 190
 
 theta_min = -20
 theta_max = 20
@@ -250,7 +258,7 @@ app.layout = html.Div([
 		dcc.Slider(id='ts_slider',
  				   min=ts_min, 
  				   max=ts_max, 
- 				   # step=ts_step,
+ 				   # step=1,
  				   # marks=ts_marks,
  				   value=ts
 		),],                  

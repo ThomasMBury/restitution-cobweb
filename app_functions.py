@@ -142,7 +142,13 @@ def make_cobweb_fig(apdmax, alpha, tau, theta, ts,
 
 def make_restitution_fig(apdmax, alpha, tau):
     
-    # Create values for plot of phase map
+    # Data points from Ravi (SFU)
+    x_data = [293.21, 153.69, 73.31, 42.60, 27.52]
+    y_data = [214.71, 189.54, 176.78, 156.91, 139.48]
+    
+    
+    
+    # Restitution curve
     x = np.linspace(0,300,1000)
     y = apdmax - alpha * np.exp(-x/tau)
     
@@ -151,6 +157,12 @@ def make_restitution_fig(apdmax, alpha, tau):
         go.Scatter(x=x, y=y,
                    showlegend=False,
                    mode='lines',
+                   )
+    )
+    fig.add_trace(
+        go.Scatter(x=x_data, y=y_data,
+                   showlegend=False,
+                   mode='markers',
                    )
     )
     fig.update_xaxes(title = r'$\text{DI (ms)}$', range=[0,300])
