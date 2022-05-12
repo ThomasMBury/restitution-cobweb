@@ -71,7 +71,7 @@ def make_cobweb_fig(apdmax, alpha, tau, theta, ts,
     '''
 
     # Create values for plot of phase map
-    xVals = np.linspace(0,600,1000)
+    xVals = np.linspace(0,600,10000)
     yVals = np.array([cobweb_map(x, apdmax, alpha, tau, theta, ts) for x in xVals])
     # # Insert nan at discontinuities
     pos = np.where(np.abs(np.diff(yVals)) >= 1)[0]
@@ -203,34 +203,32 @@ def make_apd_sequence(apd_traj):
 
 
 
-
-#----------------
-# Test functions
-#------------------- 
-
-
-
-# Test function to generate a trajectory
-apdmax = 300
-alpha = 100
-tau = 100
-theta = 0
-ts = 300
-
-apd0 = 300
-nmax = 10
-
-apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
-
-# fig_cobweb_map = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
-# fig_cobweb_map.write_html('temp.html')
-
-fig_apd_sequence = make_apd_sequence(apd_traj)
-fig_apd_sequence.write_html('temp.html')
-
-
-
-
-# fig = make_restitution_plot()
-# fig.write_html('temp.html')
-
+# 
+# #----------------
+# # Test functions
+# #------------------- 
+# 
+# # Test function to generate a trajectory
+# apdmax = 300
+# alpha = 100
+# tau = 100
+# theta = 0
+# ts = 300
+# 
+# apd0 = 300
+# nmax = 10
+# 
+# apd_traj = generate_cobweb_trajectory(nmax, apd0, apdmax, alpha, tau, theta, ts)
+# 
+# # fig_cobweb_map = make_cobweb_fig(apdmax, alpha, tau, theta, ts, apd_traj)
+# # fig_cobweb_map.write_html('temp.html')
+# 
+# fig_apd_sequence = make_apd_sequence(apd_traj)
+# fig_apd_sequence.write_html('temp.html')
+# 
+# 
+# 
+# 
+# # fig = make_restitution_plot()
+# # fig.write_html('temp.html')
+# 
