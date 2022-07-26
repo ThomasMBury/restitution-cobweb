@@ -248,7 +248,7 @@ def make_cobweb_fig_sigmoid(a, b, x0, theta, ts,
     fig.update_layout(
         # width=500, height=500,
         margin=dict(l=50,r=10,t=100,b=10),
-        title=r'$\text{Cobweb plot}\\ \text{APD}_{i+1} = g(Nt_s-\text{APD}_i)$',
+        title=r'$\text{Cobweb plot}\\ \text{APD}_{i+1} = f(Nt_s-\text{APD}_i)$',
         )
        
     return fig
@@ -327,7 +327,7 @@ def make_restitution_fig_sigmoid(a, b, x0):
         title=r'$\text{Restitution curve}\\ f(\text{DI})=a/\left(1+e^{-(\text{DI}-x_0)/b}\right)$',
         )
     
-    return fig    
+    return fig
 
 
 
