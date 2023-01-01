@@ -6,7 +6,7 @@ Dashboard to investigate dynamics of a periodically stimulated cardiac cell base
 Displays the restitution function, the iterative map as a cobweb plot, and the APD sequence.
 Parameters for the simulation and the restitution function may be varied using the sliders.
 
-The app is currently hosted on Heroku [here](https://restitution-cobweb.herokuapp.com/).
+The app is currently hosted [here](https://restitution-cobweb.thomasbury.net/).
 
 ## Running the app locally
 
